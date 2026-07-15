@@ -14,35 +14,35 @@ A simple and efficient web application built with Python and Flask to manage stu
 ## Installation & Setup
 Follow these steps to install the dependencies and run the application locally on your computer:
 
-**1. Prerequisites:**
+**1. Prerequisites:**  
 Ensure you have Python 3.x installed on your machine.
 
-**2. Set Up a Virtual Environment (Recommended):**
+**2. Set Up a Virtual Environment (Recommended):**  
 Open your terminal or command prompt inside the project directory and run:
 
-**On Windows:**
+**On Windows:**  
 
-Bash
+Bash  
 python -m venv venv  
 venv\Scripts\activate
 
-**On Mac/Linux:**
+**On Mac/Linux:**  
 
-Bash
-python3 -m venv venv
+Bash  
+python3 -m venv venv  
 source venv/bin/activate
 
-**3. Install Dependencies:**
-Install all the required Python packages specified in the requirements profile:
+**3. Install Dependencies:**  
+Install all the required Python packages specified in the requirements profile:  
 
-Bash
+Bash  
 pip install -r requirements.txt
 
-**4. Run the Application:**
+**4. Run the Application:**  
 Execute the main application file to fire up the system server:
 
-Bash
-python main.py
+Bash  
+python main.py  
 Once running, open your web browser and navigate to:
 
 Plaintext
