@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Students - Fee System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="nav-back">← Back to Main Dashboard</a>
+        
+        <header style="margin-bottom: 20px;">
+            <h1>Manage Student Information</h1>
+            <p>Create, update profile fields, or remove student matrices from records</p>
+        </header>
+
+        {% if message %}
+        <div class="alert alert-{{ status }}">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <!-- Main Enrollment and Update Form Layout -->
+        <form id="studentForm" action="/add-student/submit" method="POST" class="form-card">
+            <!-- Hidden input configuration control element -->
+            <input type="hidden" id="formAction" name="action" value="add">
+
+            <h2 style="margin-bottom: 20px; border-bottom: 2px solid var(--bg-color); padding-bottom: 8px;">1. Basic Demographics</h2>
+            <div class="form-group-grid">
+                <div class="form-field">
+                    <label for="Roll_No">Roll Number *</label>
+                    <input type="text" id="Roll_No" name="Roll_No" value="{{ student.Roll_No or '' }}" required>
+                </div>
+                <div class="form-field">
+                    <label for="Register_No">Register Number *</label>
+                    <input type="text" id="Register_No" name="Register_No" value="{{ student.Register_No or '' }}" required>
+                </div>
+                <div class="form-field">
+                    <label for="Student_Name">Student Name *</label>
+                    <input type="text" id="Student_Name" name="Student_Name" value="{{ student.Student_Name or '' }}" required>
+                </div>
+                <div class="form-field">
+                    <label for="Father_Name">Father Name</label>
+                    <input type="text" id="Father_Name" name="Father_Name" value="{{ student.Father_Name or '' }}">
+                </div>
+                <div class="form-field">
+                    <label for="Class">Class / Batch *</label>
+                    <input type="text" id="Class" name="Class" value="{{ student.Class or '' }}" required>
+                </div>
+                <div class="form-field">
+                    <label for="Course">Course Name *</label>
+                    <input type="text" id="Course" name="Course" value="{{ student.Course or '' }}" required>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 20px; border-bottom: 2px solid var(--bg-color); padding-bottom: 8px;">2. Financial Breakdown Setup</h2>
+            
+            <!-- Academic Year 1 (Always Visible) -->
+            <div class="year-section" id="section_year1">
+                <h3>Academic Year 1</h3>
+                <div class="form-group-grid">
+                    <div class="form-field">
+                        <label for="Tuition_Fee_Year1">Tuition Fee ($)</label>
+                        <input type="text" id="Tuition_Fee_Year1" name="Tuition_Fee_Year1" value="{{ student.Tuition_Fee_Year1 or '0' }}">
+                    </div>
+                    <div class="form-field">
+                        <label for="Bus_Fee_Year1">Bus Fee ($)</label>
+                        <input type="text" id="Bus_Fee_Year1" name="Bus_Fee_Year1" value="{{ student.Bus_Fee_Year1 or '0' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Year 2 -->
+            <div class="year-section hidden-section" id="section_year2">
+                <h3>Academic Year 2</h3>
+                <div class="form-group-grid">
+                    <div class="form-field">
+                        <label for="Tuition_Fee_Year2">Tuition Fee ($)</label>
+                        <input type="text" id="Tuition_Fee_Year2" name="Tuition_Fee_Year2" value="{{ student.Tuition_Fee_Year2 or '0' }}">
+                    </div>
+                    <div class="form-field">
+                        <label for="Bus_Fee_Year2">Bus Fee ($)</label>
+                        <input type="text" id="Bus_Fee_Year2" name="Bus_Fee_Year2" value="{{ student.Bus_Fee_Year2 or '0' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Year 3 -->
+            <div class="year-section hidden-section" id="section_year3">
+                <h3>Academic Year 3</h3>
+                <div class="form-group-grid">
+                    <div class="form-field">
+                        <label for="Tuition_Fee_Year3">Tuition Fee ($)</label>
+                        <input type="text" id="Tuition_Fee_Year3" name="Tuition_Fee_Year3" value="{{ student.Tuition_Fee_Year3 or '0' }}">
+                    </div>
+                    <div class="form-field">
+                        <label for="Bus_Fee_Year3">Bus Fee ($)</label>
+                        <input type="text" id="Bus_Fee_Year3" name="Bus_Fee_Year3" value="{{ student.Bus_Fee_Year3 or '0' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Year 4 -->
+            <div class="year-section hidden-section" id="section_year4">
+                <h3>Academic Year 4</h3>
+                <div class="form-group-grid">
+                    <div class="form-field">
+                        <label for="Tuition_Fee_Year4">Tuition Fee ($)</label>
+                        <input type="text" id="Tuition_Fee_Year4" name="Tuition_Fee_Year4" value="{{ student.Tuition_Fee_Year4 or '0' }}">
+                    </div>
+                    <div class="form-field">
+                        <label for="Bus_Fee_Year4">Bus Fee ($)</label>
+                        <input type="text" id="Bus_Fee_Year4" name="Bus_Fee_Year4" value="{{ student.Bus_Fee_Year4 or '0' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div id="btnDynamicWrapper">
+                <button type="button" id="addYearBtn" class="btn btn-dynamic">+ Add Year Section</button>
+            </div>
+            <p id="limitMessage" style="color: var(--danger); font-weight: 600; margin-bottom: 20px; display: none;">Maximum 4 Academic Years Allowed</p>
+
+            <div class="btn-container" style="border-top: 2px solid var(--bg-color); padding-top: 20px;">
+                <button type="submit" onclick="setAction('add')" class="btn btn-primary">Add Student</button>
+                <button type="submit" onclick="setAction('update')" class="btn btn-success">Update Student</button>
+            </div>
+        </form>
+
+        <!-- New Delete Student Section Box -->
+        <div class="form-card" style="border-top: 4px solid var(--danger);">
+            <h2 style="margin-bottom: 10px; color: var(--danger);">3.Delete Student</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Type a valid student Roll Number below to completely wipe their records from the database spreadsheet.</p>
+            
+            <form action="/delete-student" method="POST" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                <div class="form-field" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+                    <label for="del_roll_no" style="font-weight: 600;">Roll Number to Remove *</label>
+                    <input type="text" id="del_roll_no" name="del_roll_no" placeholder="e.g. STU101" required>
+                </div>
+                <button type="submit" class="btn" style="background-color: var(--danger); color: white; padding: 10px 30px;" onclick="return confirm('Are you sure you want to permanently delete this student record? This cannot be undone.');">Delete Student</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentVisibleYear = 1;
+        const addYearBtn = document.getElementById('addYearBtn');
+        const limitMessage = document.getElementById('limitMessage');
+        const studentForm = document.getElementById('studentForm');
+
+        // Prevent the main form from submitting automatically when pressing Enter inside text inputs
+        studentForm.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && event.target.tagName === 'INPUT') {
+                event.preventDefault();
+            }
+        });
+
+        addYearBtn.addEventListener('click', () => {
+            if (currentVisibleYear < 4) {
+                currentVisibleYear++;
+                document.getElementById(`section_year${currentVisibleYear}`).classList.remove('hidden-section');
+                
+                if (currentVisibleYear === 4) {
+                    addYearBtn.disabled = true;
+                    addYearBtn.style.display = 'none';
+                    limitMessage.style.display = 'block';
+                }
+            }
+        });
+
+        function setAction(actionValue) {
+            document.getElementById('formAction').value = actionValue;
+        }
+    </script>
+</body>
+</html>

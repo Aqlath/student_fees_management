@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Statement Information - Fee System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="nav-back">← Back to Main Dashboard</a>
+        
+        <header style="margin-bottom: 20px;">
+            <h1>Student Fee Lookup Center</h1>
+            <p>Query records by roll numbers to generate contextual tables dynamically</p>
+        </header>
+
+        <!-- Dynamic Message Notification Banner -->
+        {% if message %}
+        <div class="alert alert-{{ status }}">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <!-- Main Query Component Card Box -->
+        <div class="form-card" style="padding: 20px; margin-bottom: 25px;">
+            <form action="/show-student" method="GET" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                <div class="form-field" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+                    <label for="roll_search" style="font-weight: 700;">Enter Roll Number</label>
+                    <input type="text" id="roll_search" name="roll_search" value="{{ query or '' }}" placeholder="e.g. STU101" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 30px;">Search</button>
+            </form>
+        </div>
+
+        {% if searched %}
+            {% if student %}
+                <!-- Student Demographic Section Block Layout -->
+                <div class="form-card">
+                    <h2 style="margin-bottom: 15px; font-size: 1.4rem; color: var(--primary);">Student Information</h2>
+                    <div class="info-display-grid">
+                        <div class="info-item"><span class="lbl">Roll Number</span><span class="val">{{ student.Roll_No }}</span></div>
+                        <div class="info-item"><span class="lbl">Register Number</span><span class="val">{{ student.Register_No }}</span></div>
+                        <div class="info-item"><span class="lbl">Student Name</span><span class="val">{{ student.Student_Name }}</span></div>
+                        <div class="info-item"><span class="lbl">Father Name</span><span class="val">{{ student.Father_Name }}</span></div>
+                        <div class="info-item"><span class="lbl">Class</span><span class="val">{{ student.Class }}</span></div>
+                        <div class="info-item"><span class="lbl">Course</span><span class="val">{{ student.Course }}</span></div>
+                    </div>
+
+                    <!-- Dropdown Element Matrix Divider -->
+                    <h2 style="margin-bottom: 10px; font-size: 1.4rem; color: var(--primary);">Filter Ledger Statement</h2>
+                    <div class="form-field" style="max-width: 300px; margin-bottom: 25px;">
+                        <label for="yearFilter" style="font-weight: 600;">Select Scope Range View</label>
+                        <select id="yearFilter">
+                            <option value="all" selected>All Years</option>
+                            <option value="1">Up to 1st Year</option>
+                            <option value="2">Up to 2nd Year</option>
+                            <option value="3">Up to 3rd Year</option>
+                            <option value="4">Up to 4th Year</option>
+                        </select>
+                    </div>
+
+                    <!-- Ledger Table Array Block Elements -->
+                    <h2 style="margin-bottom: 10px; font-size: 1.2rem;">Fee Information Table</h2>
+                    <div class="table-responsive">
+                        <table id="feesTable">
+                            <thead>
+                                <tr>
+                                    <th>Academic Year</th>
+                                    <th>Tuition Fee</th>
+                                    <th>Bus Fee</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="row_y1" data-year="1">
+                                    <td>Year 1</td>
+                                    <td>{{ student.Tuition_Fee_Year1 }}</td>
+                                    <td>{{ student.Bus_Fee_Year1 }}</td>
+                                    <td class="year-tot">{{ student.Total_Year1 }}</td>
+                                </tr>
+                                <tr id="row_y2" data-year="2">
+                                    <td>Year 2</td>
+                                    <td>{{ student.Tuition_Fee_Year2 }}</td>
+                                    <td>{{ student.Bus_Fee_Year2 }}</td>
+                                    <td class="year-tot">{{ student.Total_Year2 }}</td>
+                                </tr>
+                                <tr id="row_y3" data-year="3">
+                                    <td>Year 3</td>
+                                    <td>{{ student.Tuition_Fee_Year3 }}</td>
+                                    <td>{{ student.Bus_Fee_Year3 }}</td>
+                                    <td class="year-tot">{{ student.Total_Year3 }}</td>
+                                </tr>
+                                <tr id="row_y4" data-year="4">
+                                    <td>Year 4</td>
+                                    <td>{{ student.Tuition_Fee_Year4 }}</td>
+                                    <td>{{ student.Bus_Fee_Year4 }}</td>
+                                    <td class="year-tot">{{ student.Total_Year4 }}</td>
+                                </tr>
+                                <tr class="cumulative-row">
+                                    <td colspan="3" style="text-align: right;">Cumulative Total:</td>
+                                    <td id="cumulativeTotalCell">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Client JavaScript Filter Logic Hook engine -->
+                <script>
+                    const yearFilter = document.getElementById('yearFilter');
+                    const rows = [
+                        { el: document.getElementById('row_y1'), total: parseFloat("{{ student.Total_Year1 }}") || 0 },
+                        { el: document.getElementById('row_y2'), total: parseFloat("{{ student.Total_Year2 }}") || 0 },
+                        { el: document.getElementById('row_y3'), total: parseFloat("{{ student.Total_Year3 }}") || 0 },
+                        { el: document.getElementById('row_y4'), total: parseFloat("{{ student.Total_Year4 }}") || 0 }
+                    ];
+                    const cumulativeCell = document.getElementById('cumulativeTotalCell');
+
+                    function runFilter() {
+                        const selection = yearFilter.value;
+                        let targetLimit = 4; // default for 'all' or '4'
+                        
+                        if (selection !== 'all') {
+                            targetLimit = parseInt(selection);
+                        }
+
+                        let runningSum = 0;
+                        rows.forEach((row, index) => {
+                            const currentYearNum = index + 1;
+                            if (currentYearNum <= targetLimit) {
+                                row.el.style.display = ""; // display visible
+                                runningSum += row.total;
+                            } else {
+                                row.el.style.display = "none"; // mask element out
+                            }
+                        });
+
+                        cumulativeCell.innerText = runningSum;
+                    }
+
+                    yearFilter.addEventListener('change', runFilter);
+                    // Initial programmatic load trigger execution call
+                    runFilter();
+                </script>
+            {% else %}
+                <div class="alert alert-error" style="text-align: center;">
+                    No records matched the Roll Number: <strong>{{ query }}</strong>. Try adding the student first.
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
