@@ -11,7 +11,43 @@ A simple and efficient web application built with Python and Flask to manage stu
 - **Submission Protection:** Normal keyboard "Enter" submissions are blocked on the data entry form to prevent accidental half-filled student enrollments.
 
 ---
+## Installation & Setup
+Follow these steps to install the dependencies and run the application locally on your computer:
 
+**1. Prerequisites**
+Ensure you have Python 3.x installed on your machine.
+
+**2. Set Up a Virtual Environment (Recommended)**
+Open your terminal or command prompt inside the project directory and run:
+
+**On Windows:**
+
+Bash
+python -m venv venv
+venv\Scripts\activate
+
+**On Mac/Linux:**
+
+Bash
+python3 -m venv venv
+source venv/bin/activate
+
+**3. Install Dependencies**
+Install all the required Python packages specified in the requirements profile:
+
+Bash
+pip install -r requirements.txt
+
+**4. Run the Application**
+Execute the main application file to fire up the system server:
+
+Bash
+python main.py
+Once running, open your web browser and navigate to:
+
+Plaintext
+[http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+---
 ## Project Structure
 
 ```text
@@ -31,36 +67,4 @@ A simple and efficient web application built with Python and Flask to manage stu
 └── requirements.txt         # Required Python library configurations
 
 
-<h2>Installation & Setup</h2>
-Follow these steps to install the dependencies and run the application locally on your computer:
 
-1. Prerequisites
-Ensure you have Python 3.x installed on your machine.
-
-2. Set Up a Virtual Environment (Recommended)
-Open your terminal or command prompt inside the project directory and run:
-
-On Windows:
-
-Bash
-python -m venv venv
-venv\Scripts\activate
-On Mac/Linux:
-
-Bash
-python3 -m venv venv
-source venv/bin/activate
-3. Install Dependencies
-Install all the required Python packages specified in the requirements profile:
-
-Bash
-pip install -r requirements.txt
-4. Run the Application
-Execute the main application file to fire up the system server:
-
-Bash
-python main.py
-Once running, open your web browser and navigate to:
-
-Plaintext
-[http://127.0.0.1:5000/](http://127.0.0.1:5000/)
