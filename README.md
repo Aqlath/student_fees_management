@@ -23,7 +23,7 @@ Open your terminal or command prompt inside the project directory and run:
 **On Windows:**
 
 Bash
-python -m venv venv
+python -m venv venv  
 venv\Scripts\activate
 
 **On Mac/Linux:**
