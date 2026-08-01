@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Expenditure Certificate</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="nav-back no-print">← Back to Main Dashboard</a>
+        
+        <header class="no-print" style="margin-bottom: 20px;">
+            <h1>Student Expenditure Certificate</h1>
+            <p>Generate formal fee certificate statements</p>
+        </header>
+
+        {% if message %}
+        <div class="alert alert-{{ status }} no-print">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <div class="form-card no-print" style="padding: 20px; margin-bottom: 25px;">
+            <form action="/show-student" method="GET" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                <div class="form-field" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+                    <label for="roll_search" style="font-weight: 700;">Enter Roll Number</label>
+                    <input type="text" id="roll_search" name="roll_search" value="{{ query or '' }}" placeholder="e.g. 23624" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 30px;">Generate Certificate</button>
+            </form>
+        </div>
+
+        {% if searched %}
+            {% if student %}
+                <div class="doc-certificate">
+                    <h2 class="doc-main-title">COURSE EXPENDITURE CERTIFICATE</h2>
+
+                    <table class="doc-header-table">
+                        <tr>
+                            <td style="width: 50%;"><strong>S.No. :</strong> {{ student.Formatted_SNo }}</td>
+                            <td style="width: 50%; text-align: right;"><strong>Date:</strong> {{ student.Date }}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;"><strong>Roll No.:</strong> {{ student.Roll_No }}</td>
+                            <td style="width: 50%; text-align: right;"><strong>Register No.:</strong> {{ student.Register_No }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><strong>Academic Year:</strong> {{ student.Academic_Year }}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;"><strong>Student Name:</strong> {{ student.Student_Name }}</td>
+                            <td style="width: 50%; text-align: right;"><strong>Father Name:</strong> {{ student.Father_Name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;"><strong>Class :</strong> {{ student.Class }}</td>
+                            <td style="width: 50%; text-align: right;"><strong>Course:</strong> {{ student.Course }}</td>
+                        </tr>
+                    </table>
+
+                    <table class="doc-fee-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">PARTICULARS</th>
+                                <th>I YEAR</th>
+                                <th>II YEAR</th>
+                                <th>III YEAR</th>
+                                <th>IV YEAR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 600;">Tuition Fees</td>
+                                <td class="num">{{ "%.2f"|format(student.Tuition_Fee_Year1) }}</td>
+                                <td class="num">{{ "%.2f"|format(student.Tuition_Fee_Year2) }}</td>
+                                <td class="num">{{ "%.2f"|format(student.Tuition_Fee_Year3) }}</td>
+                                <td class="num">{{ "%.2f"|format(student.Tuition_Fee_Year4) }}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Bus Fees</td>
+                                <td class="num">{{ "%.2f"|format(student.Bus_Fee_Year1) }}</td>
+                                <td class="num">{{ "%.2f"|format(student.Bus_Fee_Year2) }}</td>
+                                <td class="num">{{ "%.2f"|format(student.Bus_Fee_Year3) }}</td>
+                                <td class="num">{{ "%.2f"|format(student.Bus_Fee_Year4) }}</td>
+                            </tr>
+                            <tr class="row-highlight">
+                                <td style="font-weight: 700;">Total (Fees per year)</td>
+                                <td class="num bold">{{ "%.2f"|format(student.Total_Year1) }}</td>
+                                <td class="num bold">{{ "%.2f"|format(student.Total_Year2) }}</td>
+                                <td class="num bold">{{ "%.2f"|format(student.Total_Year3) }}</td>
+                                <td class="num bold">{{ "%.2f"|format(student.Total_Year4) }}</td>
+                            </tr>
+                            <tr class="row-grand">
+                                <td colspan="3" style="font-weight: 700; text-align: left;">TOTAL EXPENDITURE FOR 4 YEARS</td>
+                                <td style="font-weight: 700; text-align: right;">Rs.</td>
+                                <td class="num bold" style="font-size: 1.1rem;">{{ "%.2f"|format(student.Grand_Total) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="doc-words-section">
+                        <strong>Rupees :</strong> <span id="amountWordsText" style="text-transform: capitalize;"></span>
+                    </div>
+
+                    <div class="doc-footer">
+                        <p>Principal</p>
+                    </div>
+                </div>
+
+                <div class="no-print" style="margin-top: 20px; text-align: center;">
+                    <button onclick="window.print();" class="btn btn-primary">Print Certificate</button>
+                </div>
+
+                <script>
+                    const grandTotalVal = parseFloat("{{ student.Grand_Total }}") || 0;
+
+                    function numberToWords(num) {
+                        if (num === 0) return "Zero Rupees Only";
+                        const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+                        const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+                        function inWords(n) {
+                            if ((n = n.toString()).length > 9) return 'overflow';
+                            let n_array = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+                            if (!n_array) return ''; 
+                            let str = '';
+                            str += (n_array[1] != 0) ? (a[Number(n_array[1])] || b[n_array[1][0]] + ' ' + a[n_array[1][1]]) + 'crore ' : '';
+                            str += (n_array[2] != 0) ? (a[Number(n_array[2])] || b[n_array[2][0]] + ' ' + a[n_array[2][1]]) + 'lakh ' : '';
+                            str += (n_array[3] != 0) ? (a[Number(n_array[3])] || b[n_array[3][0]] + ' ' + a[n_array[3][1]]) + 'thousand ' : '';
+                            str += (n_array[4] != 0) ? (a[Number(n_array[4])] || b[n_array[4][0]] + ' ' + a[n_array[4][1]]) + 'hundred ' : '';
+                            str += (n_array[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n_array[5])] || b[n_array[5][0]] + ' ' + a[n_array[5][1]]) : '';
+                            return str;
+                        }
+                        
+                        return inWords(Math.floor(num)).trim() + " only.";
+                    }
+
+                    document.getElementById('amountWordsText').innerText = numberToWords(grandTotalVal);
+                </script>
+            {% else %}
+                <div class="alert alert-error" style="text-align: center;">
+                    No records matched the Roll Number: <strong>{{ query }}</strong>. Try adding the student first.
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>

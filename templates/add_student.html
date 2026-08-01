@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add / Update Student Record</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="nav-back">← Back to Main Dashboard</a>
+        
+        <header style="margin-bottom: 20px;">
+            <h1>Student Record Management</h1>
+            <p>Add new entries or update existing fee structures</p>
+        </header>
+
+        {% if message %}
+        <div class="alert alert-{{ status }}">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <div class="form-card">
+            <form id="studentDataForm" action="/add-student/submit" method="POST">
+                <h2>1. Profile Information</h2>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="Roll_No">Roll Number *</label>
+                        <input type="text" id="Roll_No" name="Roll_No" value="{{ student.Roll_No or '' }}" required placeholder="e.g. 23624">
+                        <small id="rollStatus" style="color: var(--text-muted); display: block; margin-top: 3px;"></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="Register_No">Register Number *</label>
+                        <input type="text" id="Register_No" name="Register_No" value="{{ student.Register_No or '' }}" required placeholder="e.g. 510623104024">
+                    </div>
+                    <div class="form-field">
+                        <label for="Student_Name">Student Name *</label>
+                        <input type="text" id="Student_Name" name="Student_Name" value="{{ student.Student_Name or '' }}" required placeholder="e.g. FATEH MOHAMMED A R">
+                    </div>
+                    <div class="form-field">
+                        <label for="Father_Name">Father Name</label>
+                        <input type="text" id="Father_Name" name="Father_Name" value="{{ student.Father_Name or '' }}" placeholder="e.g. Abdul Rahim A">
+                    </div>
+                    <div class="form-field">
+                        <label for="Class">Class / Year *</label>
+                        <input type="text" id="Class" name="Class" value="{{ student.Class or '' }}" required placeholder="e.g. Third Year">
+                    </div>
+                    <div class="form-field">
+                        <label for="Course">Course *</label>
+                        <input type="text" id="Course" name="Course" value="{{ student.Course or '' }}" required placeholder="e.g. B.E. Computer Science and Engineering">
+                    </div>
+                    <div class="form-field">
+                        <label for="Academic_Year">Academic Year</label>
+                        <input type="text" id="Academic_Year" name="Academic_Year" value="{{ student.Academic_Year or '' }}" placeholder="e.g. 2025-2026 or 25-26">
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 30px;">2. Annual Fee Breakdown</h2>
+                
+                <div class="fee-year-section">
+                    <h3>1st Year</h3>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Tuition Fee</label>
+                            <input type="number" step="0.01" id="Tuition_Fee_Year1" name="Tuition_Fee_Year1" value="{{ student.Tuition_Fee_Year1 or 0 }}">
+                        </div>
+                        <div class="form-field">
+                            <label>Bus Fee</label>
+                            <input type="number" step="0.01" id="Bus_Fee_Year1" name="Bus_Fee_Year1" value="{{ student.Bus_Fee_Year1 or 0 }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fee-year-section">
+                    <h3>2nd Year</h3>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Tuition Fee</label>
+                            <input type="number" step="0.01" id="Tuition_Fee_Year2" name="Tuition_Fee_Year2" value="{{ student.Tuition_Fee_Year2 or 0 }}">
+                        </div>
+                        <div class="form-field">
+                            <label>Bus Fee</label>
+                            <input type="number" step="0.01" id="Bus_Fee_Year2" name="Bus_Fee_Year2" value="{{ student.Bus_Fee_Year2 or 0 }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fee-year-section">
+                    <h3>3rd Year</h3>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Tuition Fee</label>
+                            <input type="number" step="0.01" id="Tuition_Fee_Year3" name="Tuition_Fee_Year3" value="{{ student.Tuition_Fee_Year3 or 0 }}">
+                        </div>
+                        <div class="form-field">
+                            <label>Bus Fee</label>
+                            <input type="number" step="0.01" id="Bus_Fee_Year3" name="Bus_Fee_Year3" value="{{ student.Bus_Fee_Year3 or 0 }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fee-year-section">
+                    <h3>4th Year</h3>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Tuition Fee</label>
+                            <input type="number" step="0.01" id="Tuition_Fee_Year4" name="Tuition_Fee_Year4" value="{{ student.Tuition_Fee_Year4 or 0 }}">
+                        </div>
+                        <div class="form-field">
+                            <label>Bus Fee</label>
+                            <input type="number" step="0.01" id="Bus_Fee_Year4" name="Bus_Fee_Year4" value="{{ student.Bus_Fee_Year4 or 0 }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group" style="margin-top: 25px;">
+                    <button type="submit" name="action" value="add" class="btn btn-primary">Add Student</button>
+                    <button type="submit" name="action" value="update" class="btn btn-success">Update Record</button>
+                </div>
+            </form>
+
+            <hr style="margin: 35px 0; border: 0; border-top: 1px solid #e2e8f0;">
+
+            <form action="/delete-student" method="POST" onsubmit="return confirm('Are you sure you want to delete this student record?');">
+                <h3 style="color: #e53e3e; margin-bottom: 10px;">Delete Record</h3>
+                <div style="display: flex; gap: 15px; align-items: flex-end;">
+                    <div class="form-field" style="flex: 1; margin-bottom: 0;">
+                        <label for="del_roll_no">Roll Number to Delete</label>
+                        <input type="text" id="del_roll_no" name="del_roll_no" required placeholder="Enter Roll No">
+                    </div>
+                    <button type="submit" class="btn btn-danger">Delete Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const addForm = document.getElementById('studentDataForm');
+        addForm.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        const rollInput = document.getElementById('Roll_No');
+        const rollStatus = document.getElementById('rollStatus');
+
+        async function fetchStudentDetails() {
+            const rollNo = rollInput.value.trim();
+            if (!rollNo) return;
+
+            try {
+                rollStatus.innerText = "Checking existing records...";
+                const response = await fetch(`/api/student/${encodeURIComponent(rollNo)}`);
+                const resData = await response.json();
+
+                if (resData.exists) {
+                    const data = resData.data;
+                    document.getElementById('Register_No').value = data.Register_No || '';
+                    document.getElementById('Student_Name').value = data.Student_Name || '';
+                    document.getElementById('Father_Name').value = data.Father_Name || '';
+                    document.getElementById('Class').value = data.Class || '';
+                    document.getElementById('Course').value = data.Course || '';
+                    document.getElementById('Academic_Year').value = data.Academic_Year || '';
+
+                    for (let i = 1; i <= 4; i++) {
+                        document.getElementById(`Tuition_Fee_Year${i}`).value = data[`Tuition_Fee_Year${i}`] || 0;
+                        document.getElementById(`Bus_Fee_Year${i}`).value = data[`Bus_Fee_Year${i}`] || 0;
+                    }
+                    rollStatus.innerText = "Existing record loaded. You can now edit and click 'Update Record'.";
+                    rollStatus.style.color = "#276749";
+                } else {
+                    rollStatus.innerText = "New Roll Number detected.";
+                    rollStatus.style.color = "#718096";
+                }
+            } catch (err) {
+                rollStatus.innerText = "";
+            }
+        }
+
+        rollInput.addEventListener('blur', fetchStudentDetails);
+    </script>
+</body>
+</html>
